@@ -111,6 +111,7 @@ async function handleSend() {
 
         const data = await response.json();
         appendMessage('bot', data.answer, data.sources || []);
+        console.log(data.chunks)
 
     } catch (error) {
         console.error('Error:', error);

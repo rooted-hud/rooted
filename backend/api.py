@@ -30,8 +30,8 @@ class ChatRequest(BaseModel):
 @app.post("/chat")
 async def chat(request: ChatRequest):
     try:
-        answer, sources = chat_client.generate_answer(request.query)
-        return {"answer": answer, "sources": sources}
+        answer, sources, relevant_chunks = chat_client.generate_answer(request.query)
+        return {"answer": answer, "sources": sources, "chunks": relevant_chunks}
     except Exception as e:
         return {"answer": f"Sorry, an error occurred: {str(e)}", "sources": []}
 

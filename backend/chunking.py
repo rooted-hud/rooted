@@ -39,8 +39,8 @@ def folder_to_chunks(folder_path):
                     metadatas.append({"source_url": url}) # Store as a dict
 
     text_splitter = RecursiveCharacterTextSplitter(
-        chunk_size=500,       
-        chunk_overlap=100,     
+        chunk_size=2500,       
+        chunk_overlap=500,     
         length_function=len,  
         is_separator_regex=False,
     )

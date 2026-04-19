@@ -34,7 +34,7 @@ class VectorDatabase:
         self.db_path = path
         self.chroma_client = chromadb.PersistentClient(path=path)
         self.main_collection = self.chroma_client.get_or_create_collection(
-            name="main_collection", 
+            name="main_collection_5x", 
             embedding_function=GeminiEmbedding(api_key=api_key)
         )
         self.other_collections = []
@@ -153,29 +153,19 @@ class ChatClient:
                 seen.add(url)
                 sources.append(url)
  
-        return answer, sources
+        return answer, sources, relevant_chunks
 
 
 if __name__ == "__main__":
-    '''
     # 1. load data
     chunked_text = folder_to_chunks("./www.hud.gov")
 
     # 2. create vector database
     vector_db = VectorDatabase("./chroma_db", GEMINI_API_KEY)
     vector_db.add_documents(chunked_text)
-    '''
+
     # 3. create chat client
-    vector_db = VectorDatabase("./chroma_db", GEMINI_API_KEY)
     chat_client = ChatClient(vector_db)
 
-
-
-    answer = chat_client.generate_answer("I'm looking for affordable and subsidzid housing'? STATE: Indiana INCOME: Less than 40,000 yearly US CITIZEN: Yes AGE: 35")
-    print(answer)
-    asdf = input()
-    while asdf != "stop":
-        chunks, metadata = chat_client.get_relevant_chunks(asdf)
-        print(metadata)
-        asdf = input()
-
+    answer, sources, chunks = chat_client.generate_answer("I live in Indiana and I think I'm going to be evicted from my housing. Can you help?")
+    print(answer, sources)
