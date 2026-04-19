@@ -52,7 +52,7 @@ function appendMessage(sender, text, sources = []) {
 
     const senderDiv = document.createElement('div');
     senderDiv.classList.add('sender-col');
-    senderDiv.textContent = sender === 'user' ? 'USER /' : 'POST /';
+    senderDiv.textContent = sender === 'user' ? 'USER /' : 'BOT /';
 
     const contentDiv = document.createElement('div');
     contentDiv.classList.add('content-col');

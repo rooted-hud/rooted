@@ -1,4 +1,4 @@
-key.env
+.env
 .venv
 venv
 chroma_db/
