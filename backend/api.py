@@ -38,3 +38,8 @@ async def chat(request: ChatRequest):
 @app.get("/health")
 async def health():
     return {"status": "ok"}
+
+@app.post("/clear_history")
+async def clear_history():
+    chat_client.history.clear()
+    return {"status": "history cleared"}

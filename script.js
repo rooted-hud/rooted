@@ -126,3 +126,21 @@ async function handleSend() {
 
 userInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') handleSend(); });
 sendBtn.addEventListener('click', handleSend);
+
+// --- Clear History on Load ---
+const CLEAR_URL = API_URL.replace("/chat", "/clear_history");
+
+async function clearHistoryOnLoad() {
+    try {
+        await fetch(CLEAR_URL, {
+            method: 'POST',
+            headers: NGROK_HEADERS
+        });
+        console.log("Session history cleared.");
+    } catch (error) {
+        console.error('Failed to clear history:', error);
+    }
+}
+
+// Call it immediately
+clearHistoryOnLoad();

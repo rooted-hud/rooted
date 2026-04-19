@@ -115,9 +115,8 @@ class ChatClient:
                 history_text += f"Question: {turn['question']}\nAnswer: {turn['answer']}\n\n"
  
         prompt = ("""You are a helpful and informative bot that answers questions using text from the reference passage included below. \
-        Be sure to respond in a complete sentence, being comprehensive, including all relevant background information. \
-        However, you are talking to a non-technical audience, so be sure to break down complicated concepts and \
-        strike a friendly and converstional tone. \
+        You are talking to a non-technical audience, so be sure to break down complicated concepts and \
+        strike a friendly and converstional tone. If unsure how to respond, ask the user relevant questions (about things like like location) before proceeding. \
         If the sources are irrelevant to the answer, you may ignore it.
  
         {history_text}
