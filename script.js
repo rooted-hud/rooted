@@ -114,7 +114,7 @@ async function handleSend() {
 
     } catch (error) {
         console.error('Error:', error);
-        appendMessage('bot', '⚠️ Connection error. Make sure your Python backend and tunnel are running.', false);
+        appendMessage('bot', '⚠️ Connection error. Make sure the Python backend and tunnel are running.', false);
     } finally {
         userInput.disabled = false;
         sendBtn.disabled = false;
