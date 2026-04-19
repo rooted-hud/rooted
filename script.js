@@ -1,5 +1,5 @@
 // const API_URL = "http://127.0.0.1:8000/chat"; 
-const API_URL = "https://octagon-wham-gambling.ngrok-free.dev";
+const API_URL = "https://octagon-wham-gambling.ngrok-free.dev/chat";
 
 const chatBox = document.getElementById('chat-box');
 const userInput = document.getElementById('user-input');
