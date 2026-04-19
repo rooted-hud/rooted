@@ -1,0 +1,8 @@
+key.env
+.venv
+venv
+chroma_db/
+www.hud.gov/
+__pycache__/
+.DS_Store
+*.code-workspace

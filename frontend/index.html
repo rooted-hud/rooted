@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hackathon RAG Search</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+</head>
+<body>
+
+    <div class="chat-container">
+        <header class="chat-header">
+            <h2>🧠 Semantic RAG Assistant</h2>
+            <p class="status">🟢 Connected via Tunnel</p>
+        </header>
+
+        <main class="chat-box" id="chat-box">
+            <div class="message bot-message">
+                <div class="message-content">
+                    <p>System initialized. Vector database loaded. What would you like to search for?</p>
+                </div>
+            </div>
+        </main>
+
+        <div class="input-container">
+            <input type="text" id="user-input" placeholder="Ask a question about the documents..." autocomplete="off">
+            <button id="send-btn">Send</button>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html
+
