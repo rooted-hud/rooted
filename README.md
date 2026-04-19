@@ -1,6 +1,6 @@
 # Rooted
 
-[![presentation slide](./img/rooted-presentation.pdf)](./img/rooted-presentation.pdf)
+[presentation slide](./img/rooted-presentation.pdf)
 
 To start the API:
 ```bash
