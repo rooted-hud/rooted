@@ -53,7 +53,7 @@ header h1 { font-size: 1.25rem; font-weight: normal; }
 
 /* Tooltip */
 .badge::after {
-    content: 'using ngrok tunnels :)';
+    content: 'using ngrok tunnels 🫪';
     position: absolute;
     top: calc(100% + 8px);
     left: 50%;
