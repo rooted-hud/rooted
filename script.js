@@ -1,6 +1,5 @@
-// --- UPDATE THIS TO YOUR NGROK/VPS URL ---
-// e.g., "https://1a2b-3c4d.ngrok.app/chat"
-const API_URL = "http://127.0.0.1:8000/chat"; 
+// const API_URL = "http://127.0.0.1:8000/chat"; 
+const API_URL = "https://octagon-wham-gambling.ngrok-free.dev";
 
 const chatBox = document.getElementById('chat-box');
 const userInput = document.getElementById('user-input');
