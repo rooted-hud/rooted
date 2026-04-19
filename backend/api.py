@@ -30,7 +30,11 @@ class ChatRequest(BaseModel):
 @app.post("/chat")
 async def chat(request: ChatRequest):
     try:
-        bot_answer = chat_client.generate_answer(request.query)
-        return {"answer": bot_answer}
+        answer, sources = chat_client.generate_answer(request.query)
+        return {"answer": answer, "sources": sources}
     except Exception as e:
-        return {"answer": f"Sorry, an error occurred: {str(e)}"}
+        return {"answer": f"Sorry, an error occurred: {str(e)}", "sources": []}
+
+@app.get("/health")
+async def health():
+    return {"status": "ok"}

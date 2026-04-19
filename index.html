@@ -3,33 +3,44 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hackathon RAG Search</title>
+    <title>Rooted | RAG Search</title>
     <link rel="stylesheet" href="style.css">
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <script src="script.js" defer></script>
 </head>
 <body>
+    <header>
+        <h1>Rooted /</h1>
+        <span class="badge">online</span>
+    </header>
 
-    <div class="chat-container">
-        <header class="chat-header">
-            <h2>Semantic RAG Assistant</h2>
-            <p class="status">Connected via Ngrok Tunnel</p>
-        </header>
-
-        <main class="chat-box" id="chat-box">
-            <div class="message bot-message">
-                <div class="message-content">
-                    <p>How can I help?</p>
+    <main>
+        <div class="chat-history" id="chat-box">
+            <div class="message-row row-bot">
+                <div class="sender-col">System /</div>
+                <div class="content-col">
+                    <div class="welcome-body">
+                        <div class="welcome-text">
+                            <p><strong>Welcome to Rooted!</strong> This tool is here to help you find affordable housing resources, understand your rights as a renter or homebuyer, and navigate programs that can make a real difference.</p>
+                            <p>Whether you're looking for subsidized housing, want to know about Section 8 vouchers, or just need to understand your options. We're pulling from official HUD resources to give you accurate, up-to-date answers.</p>
+                            <p class="muted">
+                            <a class="hud-link" href="https://www.hud.gov/helping-americans" target="_blank" rel="noopener">
+                                hud.gov/helping-americans ↗
+                            </a>
+                            </p>
+                        </div>
+                        <div class="welcome-logo">
+                            <img src="/img/fheo.jpg" alt="Equal Housing Opportunity logo" />
+                        </div>
+                    </div>
                 </div>
             </div>
-        </main>
-
-        <div class="input-container">
-            <input type="text" id="user-input" placeholder="Ask a question to search www.hud.gov..." autocomplete="off">
-            <button id="send-btn">Send</button>
         </div>
-    </div>
 
-    <script src="script.js"></script>
+        <div class="input-area">
+            <input type="text" id="user-input" placeholder="Ask about housing resources, eligibility, programs..." autocomplete="off">
+            <button id="send-btn">Send /</button>
+        </div>
+    </main>
 </body>
-</html
-
+</html>

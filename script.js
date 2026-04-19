@@ -1,28 +1,91 @@
-// const API_URL = "http://127.0.0.1:8000/chat"; 
 const API_URL = "https://octagon-wham-gambling.ngrok-free.dev/chat";
+const HEALTH_URL = API_URL.replace("/chat", "/health");
+const NGROK_HEADERS = { 'ngrok-skip-browser-warning': 'true' };
 
 const chatBox = document.getElementById('chat-box');
 const userInput = document.getElementById('user-input');
 const sendBtn = document.getElementById('send-btn');
+const badge = document.querySelector('.badge');
 
-function appendMessage(sender, text, isMarkdown = false) {
-    const msgDiv = document.createElement('div');
-    msgDiv.classList.add('message', sender === 'user' ? 'user-message' : 'bot-message');
-    
+// --- Server Status Check ---
+async function checkServerStatus() {
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), 4000);
+    try {
+        const response = await fetch(HEALTH_URL, {
+            method: 'GET',
+            headers: NGROK_HEADERS,
+            signal: controller.signal
+        });
+        setStatus(response.ok);
+    } catch {
+        setStatus(false);
+    } finally {
+        clearTimeout(timer);
+    }
+}
+
+function setStatus(isOnline) {
+    badge.textContent = isOnline ? 'online' : 'offline';
+    badge.classList.toggle('badge-offline', !isOnline);
+}
+
+// Check on load, then every 30 seconds
+checkServerStatus();
+setInterval(checkServerStatus, 30000);
+
+
+// --- Chat ---
+function formatSourceUrl(url) {
+    try {
+        const parsed = new URL(url);
+        return (parsed.hostname + parsed.pathname + parsed.search)
+            .replace(/^www\./, '')
+            .replace(/\/$/, '');
+    } catch {
+        return url; // if URL is malformed, show as-is
+    }
+}
+function appendMessage(sender, text, sources = []) {
+    const rowDiv = document.createElement('div');
+    rowDiv.classList.add('message-row', sender === 'user' ? 'row-user' : 'row-bot');
+
+    const senderDiv = document.createElement('div');
+    senderDiv.classList.add('sender-col');
+    senderDiv.textContent = sender === 'user' ? 'USER /' : 'POST /';
+
     const contentDiv = document.createElement('div');
-    contentDiv.classList.add('message-content');
-    
-    if (isMarkdown) {
-        // Parse the markdown into HTML using the marked library
+    contentDiv.classList.add('content-col');
+
+    // Main answer text (always plain for user, markdown for bot)
+    if (sender !== 'user') {
         contentDiv.innerHTML = marked.parse(text);
     } else {
-        contentDiv.textContent = text;
+        const p = document.createElement('p');
+        p.textContent = text;
+        contentDiv.appendChild(p);
     }
-    
-    msgDiv.appendChild(contentDiv);
-    chatBox.appendChild(msgDiv);
-    
-    // Auto-scroll to the bottom
+
+    // Numbered sources list
+    if (sources.length > 0) {
+        const sourceBlock = document.createElement('ol');
+        sourceBlock.classList.add('source-list');
+        sources.forEach(url => {
+            const li = document.createElement('li');
+            const a = document.createElement('a');
+            a.href = url;
+            a.target = '_blank';
+            a.rel = 'noopener';
+            a.textContent = formatSourceUrl(url) + ' ↗';
+            li.appendChild(a);
+            sourceBlock.appendChild(li);
+        });
+        contentDiv.appendChild(sourceBlock);
+    }
+
+    rowDiv.appendChild(senderDiv);
+    rowDiv.appendChild(contentDiv);
+    chatBox.appendChild(rowDiv);
     chatBox.scrollTop = chatBox.scrollHeight;
 }
 
@@ -30,52 +93,35 @@ async function handleSend() {
     const query = userInput.value.trim();
     if (!query) return;
 
-    // 1. Show user message and clear input
     appendMessage('user', query, false);
     userInput.value = '';
-    
-    // 2. Disable input while waiting
+
     userInput.disabled = true;
     sendBtn.disabled = true;
-    sendBtn.textContent = "Thinking...";
+    sendBtn.textContent = 'Thinking...';
 
     try {
-        // 3. Send to your Python backend
         const response = await fetch(API_URL, {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ query: query })
+            headers: { 'Content-Type': 'application/json', ...NGROK_HEADERS },
+            body: JSON.stringify({ query })
         });
 
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
+        if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
 
         const data = await response.json();
-        
-        // 4. Show bot response (True flag enables Markdown parsing)
-        appendMessage('bot', data.answer, true);
+        appendMessage('bot', data.answer, data.sources || []);
 
     } catch (error) {
         console.error('Error:', error);
         appendMessage('bot', '⚠️ Connection error. Make sure your Python backend and tunnel are running.', false);
     } finally {
-        // 5. Re-enable inputs
         userInput.disabled = false;
         sendBtn.disabled = false;
-        sendBtn.textContent = "Send";
+        sendBtn.textContent = 'Send /';
         userInput.focus();
     }
 }
 
-// Allow pressing 'Enter' to send
-userInput.addEventListener('keypress', (e) => {
-    if (e.key === 'Enter') {
-        handleSend();
-    }
-});
-
-// Click event for the send button
+userInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') handleSend(); });
 sendBtn.addEventListener('click', handleSend);

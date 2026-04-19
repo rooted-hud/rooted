@@ -9,7 +9,6 @@ import uuid
 import hashlib
 import time
 
-
 load_dotenv('key.env')
 GEMINI_API_KEY = os.getenv('GEMINI_API_KEY')
 if not GEMINI_API_KEY:
@@ -91,6 +90,7 @@ class ChatClient:
         self.vector_db = vector_db
         self.gemini_api_key = GEMINI_API_KEY
         self.gemini_client = genai.Client(api_key=self.gemini_api_key)
+        self.history = []  # List of {"question": ..., "answer": ...} dicts
 
     def get_relevant_chunks(self, query, n_results=3):
         results = self.vector_db.main_collection.query(query_texts=[query], n_results=n_results)
@@ -107,42 +107,53 @@ class ChatClient:
         return relevant_chunks, relevant_metadata
 
     def create_rag_prompt(self, relevant_context, query):
-        escaped = relevant_context.replace("'", "").replace('"', "") #??
-
+ 
+        history_text = ""
+        if self.history:
+            history_text = "CONVERSATION HISTORY:\n"
+            for turn in self.history:
+                history_text += f"Question: {turn['question']}\nAnswer: {turn['answer']}\n\n"
+ 
         prompt = ("""You are a helpful and informative bot that answers questions using text from the reference passage included below. \
         Be sure to respond in a complete sentence, being comprehensive, including all relevant background information. \
         However, you are talking to a non-technical audience, so be sure to break down complicated concepts and \
         strike a friendly and converstional tone. \
-        If the passage is irrelevant to the answer, you may ignore it.
-        
-        <START OF PASSAGE>
+        If the sources are irrelevant to the answer, you may ignore it.
+ 
+        {history_text}
+        <START OF SOURCES>
         {relevant_context}
-        <END OF PASSAGE>
-
-        QUESTION:
+        <END OF SOURCES>
+ 
+        Question:
         {query}
-
-        ANSWER:
-        """).format(query=query, relevant_context=escaped)
-
+ 
+        Answer:
+        """).format(query=query, relevant_context=relevant_context, history_text=history_text)
+ 
         return prompt
-
-
+ 
     def generate_answer(self, query):
-        # Retrieve top 3 relevant text chunks
-        relevant_chunks, relevant_metadata = self.get_relevant_chunks(query, n_results=3)
-
+        relevant_chunks, relevant_metadata = self.get_relevant_chunks(query, n_results=5)
+ 
         prompt = self.create_rag_prompt(relevant_context="\n\n---\n\n".join(relevant_chunks), query=query)
-
+ 
         response = self.gemini_client.models.generate_content(model='gemini-2.5-flash', contents=prompt)
         answer = response.text
-
-        # Extract unique source URLs to append to the end of the answer
-        sources = set([meta.get("source_url") for meta in relevant_metadata if meta.get("source_url")])
-        if sources:
-            answer += "\n\n**Sources:**\n" + "\n".join([f"- {url}" for url in sources])
-
-        return answer
+ 
+        # Save this turn to history
+        self.history.append({"question": query, "answer": answer})
+ 
+        # Extract unique source URLs as a separate list (preserving order)
+        seen = set()
+        sources = []
+        for meta in relevant_metadata:
+            url = meta.get("source_url")
+            if url and url not in seen:
+                seen.add(url)
+                sources.append(url)
+ 
+        return answer, sources
 
 
 if __name__ == "__main__":
