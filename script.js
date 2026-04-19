@@ -115,7 +115,7 @@ async function handleSend() {
 
     } catch (error) {
         console.error('Error:', error);
-        appendMessage('bot', '⚠️ Connection error. Make sure the Python backend and tunnel are running.', false);
+        appendMessage('bot', 'Connection error. Our server is probably offline. Maybe try forking the [repository](https://github.com/rooted-hud/rooted) to try yourself!', false);
     } finally {
         userInput.disabled = false;
         sendBtn.disabled = false;

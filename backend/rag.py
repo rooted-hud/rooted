@@ -8,8 +8,9 @@ from chunking import folder_to_chunks
 import uuid
 import hashlib
 import time
+import argparse
 
-load_dotenv('key.env')
+load_dotenv('.env')
 GEMINI_API_KEY = os.getenv('GEMINI_API_KEY')
 if not GEMINI_API_KEY:
     raise ValueError("Gemini API Key not provided. Please provide GEMINI_API_KEY as an environment variable")
@@ -30,14 +31,14 @@ class GeminiEmbedding(EmbeddingFunction):
         return [item.values for item in response.embeddings]
 
 class VectorDatabase:
-    def __init__(self, path, api_key):
+    def __init__(self, path, name, api_key):
         self.db_path = path
         self.chroma_client = chromadb.PersistentClient(path=path)
         self.main_collection = self.chroma_client.get_or_create_collection(
-            name="main_collection_5x", 
+            name=name, 
             embedding_function=GeminiEmbedding(api_key=api_key)
         )
-        self.other_collections = []
+        # We only support using 1 collection. In the future it would be good to add support for multiple!
     
     def add_documents(self, chunks: list):
         if len(chunks) == 0: return
@@ -80,7 +81,7 @@ class VectorDatabase:
             # Progress update
             current_count = min(i + batch_size, total_unique)
             print(f"--- Indexed {current_count}/{total_unique} chunks ---")
-            time.sleep(2.1) # Wait half a second between batches
+            time.sleep(2.1) # Wait between batches
 
         print(f"--- Finished! Successfully indexed {total_unique} unique chunks. ---")
 
@@ -156,15 +157,22 @@ class ChatClient:
 
 
 if __name__ == "__main__":
-    # 1. load data
-    chunked_text = folder_to_chunks("./www.hud.gov")
+    parser = argparse.ArgumentParser(description="Scrape a website and save pages as Markdown files.")
+    parser.add_argument("data_folder", type=str, default="./www.hud.gov", help="Path to the folder containing all Markdown files")
+    parser.add_argument("-v", "--database_path", type=str, default="./chroma_db", help="(default: ./chroma_db)")
+    parser.add_argument("-c", "--collection_name", type=str, default="main_collection", help="Name of collection within vector database (default: \"main_collection\")")
+    
+    args = parser.parse_args()
 
-    # 2. create vector database
-    vector_db = VectorDatabase("./chroma_db", GEMINI_API_KEY)
+    # 1. load data
+    chunked_text = folder_to_chunks(args.data_folder)
+
+    # 2. create collection in vector database
+    vector_db = VectorDatabase(args.database_path, args.collection_name, GEMINI_API_KEY)
     vector_db.add_documents(chunked_text)
 
     # 3. create chat client
     chat_client = ChatClient(vector_db)
 
-    answer, sources, chunks = chat_client.generate_answer("I live in Indiana and I think I'm going to be evicted from my housing. Can you help?")
+    answer, sources, chunks = chat_client.generate_answer("I am a homeless veteran and need a Housing Choice Voucher. Who can I contact?")
     print(answer, sources)
