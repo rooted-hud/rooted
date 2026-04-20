@@ -1,8 +1,8 @@
 # Rooted
 
-Rooted is a chatbot that uses retrieval-augmented generation to deliver accurate information to those in need. It is easy to set up and can be deployed across many different websites, with U.S. Department of Housing and Urban Development as proof of concept.
+Rooted is a chatbot that uses retrieval-augmented generation to deliver accurate information to those in need. It is easy to set up and can be deployed across many different websites, with the U.S. Department of Housing and Urban Development as proof of concept.
 
-i.e. yet another LLM wrapper for a hackathon (for social good!)
+i.e., yet another LLM wrapper for a hackathon (for social good!)
 
 [presentation slide](./img/rooted-presentation.pdf)
 
@@ -26,7 +26,7 @@ This does a graph traversal from the webpage (to a depth of 2) and converts all 
 
 Use `-o ./path/` to specify an output folder.
 
-#### 3. Concatenate text, recursively split text into chunks, and embed chunks into the chromaDB vector database.
+#### 3. Concatenate text, recursively split text into chunks, and embed chunks into the chromaDB vector database
 ```bash
 ./rag.py ./www.hud.gov
 ```
