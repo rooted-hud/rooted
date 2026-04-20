@@ -8,10 +8,6 @@ i.e. yet another LLM wrapper for a hackathon (for social good!)
 
 Submission by Will Orban, Matias Toro, and Max Ficco for the 2026 Hesburgh Library Hackathon.
 
-## Demos
-
-
-
 ## To Reproduce:
 
 #### 1. Download repository and requirements

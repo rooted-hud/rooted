@@ -31,7 +31,7 @@ class GeminiEmbedding(EmbeddingFunction):
         return [item.values for item in response.embeddings]
 
 class VectorDatabase:
-    def __init__(self, path, name, api_key):
+    def __init__(self, api_key, path="./chroma_db", name="main_collection"):
         self.db_path = path
         self.chroma_client = chromadb.PersistentClient(path=path)
         self.main_collection = self.chroma_client.get_or_create_collection(
@@ -115,9 +115,8 @@ class ChatClient:
             for turn in self.history:
                 history_text += f"Question: {turn['question']}\nAnswer: {turn['answer']}\n\n"
  
-        prompt = ("""You are a helpful and informative bot that answers questions using text from the reference passage included below. \
-        You are talking to a non-technical audience, so be sure to break down complicated concepts and \
-        strike a friendly and converstional tone. If unsure how to respond, ask the user relevant questions (about things like like location) before proceeding. \
+        prompt = ("""You are a helpful and informative bot that answers questions using text from the sources included below. Sources are fetched based on the user's questions. \
+                Answer concisely and strike a friendly and converstional tone. Be sure to ask the user relevant questions that might lead to more helpful sources. \
         If the sources are irrelevant to the answer, you may ignore it.
  
         {history_text}
@@ -168,7 +167,7 @@ if __name__ == "__main__":
     chunked_text = folder_to_chunks(args.data_folder)
 
     # 2. create collection in vector database
-    vector_db = VectorDatabase(args.database_path, args.collection_name, GEMINI_API_KEY)
+    vector_db = VectorDatabase(GEMINI_API_KEY, args.database_path, args.collection_name)
     vector_db.add_documents(chunked_text)
 
     # 3. create chat client

@@ -115,7 +115,8 @@ async function handleSend() {
 
     } catch (error) {
         console.error('Error:', error);
-        appendMessage('bot', 'Connection error. Our server is probably offline. Maybe try forking the [repository](https://github.com/rooted-hud/rooted) to try yourself!', false);
+        appendMessage('bot', 'Connection error. Our server is probably offline. Maybe try forking the [repository](https://github.com/rooted-hud/rooted) to try yourself!', ['(relevant sources used for context would appear here!)', 'https://github.com/rooted-hud/rooted/fork', 'https://en.wikipedia.org/wiki/Error_message']);
+
     } finally {
         userInput.disabled = false;
         sendBtn.disabled = false;

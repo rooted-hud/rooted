@@ -19,7 +19,7 @@ app.add_middleware(
 )
 
 print("Loading Vector Database...")
-vector_db = VectorDatabase("./chroma_db", GEMINI_API_KEY)
+vector_db = VectorDatabase(GEMINI_API_KEY, "./chroma_db", "main_collection_5x")
 chat_client = ChatClient(vector_db)
 print("Database loaded. Ready for queries!")
 
