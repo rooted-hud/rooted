@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 import os
 from dotenv import load_dotenv
 import google.genai as genai
@@ -173,5 +172,5 @@ if __name__ == "__main__":
     # 3. create chat client
     chat_client = ChatClient(vector_db)
 
-    answer, sources, chunks = chat_client.generate_answer("I am a homeless veteran and need a Housing Choice Voucher. Who can I contact?")
+    answer, sources, chunks = chat_client.generate_answer("testing testing")
     print(answer, sources)

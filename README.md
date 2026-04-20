@@ -16,6 +16,7 @@ git clone git@github.com:rooted-hud/rooted
 python -m venv .venv
 pip install -r requirements.txt
 cd backend/
+chmod +x scraper.py
 ```
 
 #### 2. Scrape website data (e.g. [hud.gov/helping-americans](https://www.hud.gov/helping-americans))
@@ -28,7 +29,7 @@ Use `-o ./path/` to specify an output folder.
 
 #### 3. Concatenate text, recursively split text into chunks, and embed chunks into the chromaDB vector database
 ```bash
-./rag.py ./www.hud.gov
+python rag.py ./www.hud.gov
 ```
 We used Gemini 2.5 Flash and gemini-embedding-001. Make sure to supply an API token as `GEMINI_API_TOKEN=` in your `.env` file.
 
